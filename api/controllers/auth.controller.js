@@ -9,7 +9,7 @@ export const signup = async (req, res, next) => {
     const newUser = new User({ username, email, password: hashedPassword });
     try {
         await newUser.save();
-        res.status(201).json({ message: 'User created successfully' });
+        res.status(201).json({ message: 'User created successfully', success: true });
     } catch (error) {
         next(error);
     }
@@ -24,7 +24,7 @@ export const signin = async (req, res, next) => {
         if (!validPassword) return next(errorHandler(401, 'Wrong credentials'));
         const token = jwt.sign({ userId: validUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         const { password: hashedPassword, ...rest } = validUser._doc;
-        res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest);
+        res.cookie('access_token', token, { httpOnly: true }).status(200).json({ success: true, ...rest });
     } catch (error) {
         next(error);
     }
